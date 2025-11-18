@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Lotes | Paints Admin</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <!-- Layout Administrativo -->
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-logo">
+                <h4>PAINTS</h4>
+                <small>Sistema Administrativo</small>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar" id="sidebarUserAvatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="sidebar-user-name" id="sidebarUserName">Cargando...</div>
+                <div class="sidebar-user-role" id="sidebarUserRole">...</div>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebarNav"></nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" onclick="cerrarSesionAdmin()">
+                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="admin-content" id="adminContent">
+            <!-- Header -->
+            <header class="admin-content-header">
+                <div class="content-header-title">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 id="pageTitle">Gestión de Lotes</h1>
+                </div>
+                <div class="content-header-actions">
+                    <button class="btn btn-primary" onclick="abrirModalRegistrarLote()">
+                        <i class="bi bi-plus-circle me-1"></i>Registrar Lote
+                    </button>
+                    <a href="/" class="btn btn-outline-primary btn-sm ms-2">
+                        <i class="bi bi-house-door me-1"></i>Tienda
+                    </a>
+                </div>
+            </header>
+
+            <!-- Breadcrumb -->
+            <nav class="admin-breadcrumb" aria-label="breadcrumb">
+                <ol class="breadcrumb" id="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard.html">Inicio</a></li>
+                    <li class="breadcrumb-item">Inventario</li>
+                    <li class="breadcrumb-item active">Lotes</li>
+                </ol>
+            </nav>
+
+            <!-- Contenido -->
+            <div class="container-fluid py-4">
+                <!-- Filtros -->
+                <div class="card filter-card mb-4">
+                    <div class="card-body">
+                        <div class="row g-3 align-items-end">
+                            <div class="col-md-3">
+                                <label class="form-label">Buscar producto</label>
+                                <input type="text" id="buscarProducto" class="form-control"
+                                    placeholder="Nombre o SKU..." onkeyup="buscarProductoLote()">
+                            </div>
+
+                            <div class="col-md-3">
+                                <label class="form-label">Proveedor</label>
+                                <select id="filtroProveedor" class="form-select">
+                                    <option value="">Todos</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Fecha desde</label>
+                                <input type="date" id="fechaDesde" class="form-control">
+                            </div>
+
+                            <div class="col-md-2">
+                                <label class="form-label">Fecha hasta</label>
+                                <input type="date" id="fechaHasta" class="form-control">
+                            </div>
+
+                            <div class="col-md-2">
+                                <button class="btn btn-primary w-100" onclick="aplicarFiltrosLotes()">
+                                    <i class="bi bi-funnel"></i> Filtrar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Selector de Producto para Ver Lotes -->
+                <div class="card mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="bi bi-search me-2"></i>Seleccionar Producto para Ver Lotes</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-8">
+                                <select id="productoSelect" class="form-select" onchange="cargarLotesDeProducto()">
+                                    <option value="">Seleccione un producto...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="alert alert-info mb-0" style="padding: 0.7rem;">
+                                    <i class="bi bi-info-circle me-2"></i>
+                                    <span id="totalLotesInfo">Seleccione un producto</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lista de Lotes -->
+                <div id="lotesContainer" class="row">
+                    <div class="col-12 text-center py-5">
+                        <i class="bi bi-boxes" style="font-size: 3rem; color: #ccc;"></i>
+                        <p class="text-muted mt-3">Seleccione un producto para ver sus lotes</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal Registrar Lote -->
+    <div class="modal fade" id="modalRegistrarLote" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-box-seam me-2"></i>Registrar Nuevo Lote
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formRegistrarLote">
+                        <div class="row g-4">
+                            <!-- Información del Lote -->
+                            <div class="col-12">
+                                <h6 class="border-bottom pb-2 mb-3">Información del Lote</h6>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Código de Lote <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="codigoLote" required
+                                    placeholder="Ej: LOT-2025-001">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Proveedor <span class="text-danger">*</span></label>
+                                <select class="form-select" id="proveedorLote" required>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha de Ingreso <span class="text-danger">*</span></label>
+                                <input type="date" class="form-control" id="fechaIngreso" required>
+                            </div>
+
+                            <div class="col-md-8">
+                                <label class="form-label">Producto <span class="text-danger">*</span></label>
+                                <select class="form-select" id="productoLote" required>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">N° Factura Proveedor</label>
+                                <input type="text" class="form-control" id="numeroFacturaProveedor"
+                                    placeholder="Ej: FP-12345">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Cantidad Total <span class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="cantidadTotal" required min="1" step="1"
+                                    placeholder="0" onchange="calcularCostoTotal()">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label class="form-label">Precio Compra por Unidad (Q) <span
+                                        class="text-danger">*</span></label>
+                                <input type="number" class="form-control" id="precioCompraUnidad" required min="0.01"
+                                    step="0.01" placeholder="0.00" onchange="calcularCostoTotal()">
+                            </div>
+
+                            <!-- Distribución a Sucursales -->
+                            <div class="col-12 mt-4">
+                                <h6 class="border-bottom pb-2 mb-3">
+                                    Distribución a Sucursales
+                                    <span class="badge bg-info ms-2" id="cantidadRestante">0 unidades disponibles</span>
+                                </h6>
+                            </div>
+
+                            <div class="col-12">
+                                <div id="distribucionSucursales">
+                                    <!-- Se llena dinámicamente -->
+                                </div>
+                            </div>
+
+                            <!-- Resumen de Costos -->
+                            <div class="col-12 mt-4">
+                                <div class="costo-resumen">
+                                    <div class="row align-items-center">
+                                        <div class="col-md-6">
+                                            <p class="mb-0 opacity-75">Costo Total del Lote</p>
+                                            <h3 id="costoTotal">Q0.00</h3>
+                                        </div>
+                                        <div class="col-md-6 text-end">
+                                            <p class="mb-0 opacity-75">Costo Promedio por Unidad</p>
+                                            <h3 id="costoPromedio">Q0.00</h3>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="guardarLote()">
+                        <i class="bi bi-save"></i> Registrar Lote
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Distribuir Lote Existente -->
+    <div class="modal fade" id="modalDistribuirLote" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-boxes me-2"></i>Distribuir Lote a Sucursales
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="loteIdDistribuir">
+                    <input type="hidden" id="productoIdDistribuir">
+
+                    <div class="alert alert-info">
+                        <strong id="cantidadDisponibleText">0 unidades disponibles</strong> para distribuir
+                    </div>
+
+                    <h6 class="mb-3">Seleccionar Sucursales</h6>
+
+                    <div id="distribucionSucursalesExistente">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+
+                    <div class="mt-3">
+                        <span class="badge bg-info" id="cantidadRestanteDistribuir">0 unidades por asignar</span>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> Cancelar
+                    </button>
+                    <button type="button" class="btn btn-primary" onclick="guardarDistribucionLote()">
+                        <i class="bi bi-check-circle"></i> Distribuir
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/admin-layout.js"></script>
+    <script src="../js/lotes.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarTituloPagina('Gestión de Lotes');
+            actualizarBreadcrumb(['Inventario', 'Lotes']);
+        });
+    </script>
+</body>
+
+</html>

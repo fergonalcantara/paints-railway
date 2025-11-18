@@ -1,0 +1,51 @@
+# Dependencias
+node_modules/
+package-lock.json
+
+# Variables de entorno
+.env
+.env.local
+.env.production
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Temporales
+tmp/
+temp/
+*.tmp
+
+# Build
+dist/
+build/
+
+# Imagenes subidas (desarrollo)
+app/public/images/productos/*
+!app/public/images/productos/.gitkeep
+
+# Docker
+.dockerignore
+
+# Kubernetes secrets
+k8s/secrets/
+
+# Database Schema
+database/
+
+# Seeders
+seeders/
+
+# Test
+test-api-simple.sh

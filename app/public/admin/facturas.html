@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facturas | Paints Admin</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+    <!-- Layout Administrativo -->
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-logo">
+                <h4>PAINTS</h4>
+                <small>Sistema Administrativo</small>
+            </div>
+            
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar" id="sidebarUserAvatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="sidebar-user-name" id="sidebarUserName">Cargando...</div>
+                <div class="sidebar-user-role" id="sidebarUserRole">...</div>
+            </div>
+            
+            <nav class="sidebar-nav" id="sidebarNav"></nav>
+            
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" onclick="cerrarSesionAdmin()">
+                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="admin-content" id="adminContent">
+            <!-- Header -->
+            <header class="admin-content-header">
+                <div class="content-header-title">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1 id="pageTitle">Gestión de Facturas</h1>
+                </div>
+                <div class="content-header-actions">
+                    <a href="pos.html" class="btn btn-primary">
+                        <i class="bi bi-plus-circle me-1"></i>Nueva Venta
+                    </a>
+                </div>
+            </header>
+            
+            <!-- Breadcrumb -->
+            <nav class="admin-breadcrumb" aria-label="breadcrumb">
+                <ol class="breadcrumb" id="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard.html">Inicio</a></li>
+                    <li class="breadcrumb-item">Ventas</li>
+                    <li class="breadcrumb-item active">Facturas</li>
+                </ol>
+            </nav>
+            
+            <!-- Contenido Facturas -->
+            <div class="container-fluid py-4">
+                <!-- Filtros -->
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="mb-3">
+                            <i class="bi bi-funnel me-2"></i>Filtros de Búsqueda
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Número de Factura</label>
+                                <input type="text" 
+                                       id="filtroNumero" 
+                                       class="form-control" 
+                                       placeholder="Ej: A-00000001"
+                                       onchange="aplicarFiltros()">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Cliente (NIT o Nombre)</label>
+                                <input type="text" 
+                                       id="filtroCliente" 
+                                       class="form-control" 
+                                       placeholder="Buscar cliente..."
+                                       onchange="aplicarFiltros()">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha Desde</label>
+                                <input type="date" 
+                                       id="filtroFechaDesde" 
+                                       class="form-control"
+                                       onchange="aplicarFiltros()">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Fecha Hasta</label>
+                                <input type="date" 
+                                       id="filtroFechaHasta" 
+                                       class="form-control"
+                                       onchange="aplicarFiltros()">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Tipo de Venta</label>
+                                <select id="filtroTipoVenta" 
+                                        class="form-select"
+                                        onchange="aplicarFiltros()">
+                                    <option value="">Todos</option>
+                                    <option value="fisica">Física (POS)</option>
+                                    <option value="online">En Línea</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">Estado</label>
+                                <select id="filtroEstado" 
+                                        class="form-select"
+                                        onchange="aplicarFiltros()">
+                                    <option value="">Todos</option>
+                                    <option value="1" selected>Activas</option>
+                                    <option value="0">Anuladas</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <button class="btn btn-primary" onclick="aplicarFiltros()">
+                                    <i class="bi bi-search me-1"></i>Buscar
+                                </button>
+                                <button class="btn btn-secondary" onclick="limpiarFiltros()">
+                                    <i class="bi bi-x-circle me-1"></i>Limpiar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resumen -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-primary">
+                                <i class="bi bi-receipt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalFacturas">0</div>
+                                <div class="stat-label">Total Facturas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-success">
+                                <i class="bi bi-cash-stack"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="totalVentas">Q0.00</div>
+                                <div class="stat-label">Total Ventas</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-info">
+                                <i class="bi bi-calendar-check"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="ventasHoy">Q0.00</div>
+                                <div class="stat-label">Ventas Hoy</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <div class="stat-icon bg-warning">
+                                <i class="bi bi-graph-up"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-value" id="promedioVenta">Q0.00</div>
+                                <div class="stat-label">Promedio por Venta</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla de Facturas -->
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">
+                            <i class="bi bi-list-ul me-2"></i>
+                            Listado de Facturas
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>N° Factura</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>NIT</th>
+                                        <th>Tipo</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="facturasTableBody">
+                                    <tr>
+                                        <td colspan="8" class="text-center py-5">
+                                            <i class="bi bi-hourglass-split" style="font-size: 3rem; color: #ccc;"></i>
+                                            <p class="text-muted mt-3">Cargando facturas...</p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/admin-layout.js"></script>
+    <script src="../js/facturas.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarTituloPagina('Gestión de Facturas');
+            actualizarBreadcrumb(['Ventas', 'Facturas']);
+        });
+    </script>
+</body>
+</html>

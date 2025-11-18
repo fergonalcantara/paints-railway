@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes | Paints Admin</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <!-- Layout Administrativo -->
+    <div class="admin-layout">
+        <!-- SIDEBAR -->
+        <aside class="admin-sidebar" id="adminSidebar">
+            <div class="sidebar-logo">
+                <h4>PAINTS</h4>
+                <small>Sistema Administrativo</small>
+            </div>
+
+            <div class="sidebar-user">
+                <div class="sidebar-user-avatar" id="sidebarUserAvatar">
+                    <i class="bi bi-person-circle"></i>
+                </div>
+                <div class="sidebar-user-name" id="sidebarUserName">Cargando...</div>
+                <div class="sidebar-user-role" id="sidebarUserRole">...</div>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebarNav"></nav>
+
+            <div class="sidebar-footer">
+                <button class="btn btn-logout" onclick="cerrarSesionAdmin()">
+                    <i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión
+                </button>
+            </div>
+        </aside>
+
+        <!-- Overlay Mobile -->
+        <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+        <!-- CONTENIDO PRINCIPAL -->
+        <main class="admin-content" id="adminContent">
+            <!-- Header -->
+            <header class="admin-content-header">
+                <div class="content-header-title">
+                    <button class="sidebar-toggle" onclick="toggleSidebar()">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <h1>Reportes del Sistema</h1>
+                </div>
+            </header>
+
+            <!-- Breadcrumb -->
+            <nav class="admin-breadcrumb" aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="dashboard.html">Inicio</a></li>
+                    <li class="breadcrumb-item active">Reportes</li>
+                </ol>
+            </nav>
+
+            <!-- Contenido Reportes -->
+            <div class="container-fluid py-4">
+                <!-- Tabs de Reportes -->
+                <ul class="nav nav-tabs mb-4" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#reporte1">
+                            <i class="bi bi-credit-card me-1"></i>Método Pago
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte2">
+                            <i class="bi bi-currency-dollar me-1"></i>Más Ingresos
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte3">
+                            <i class="bi bi-graph-up me-1"></i>Más Vendidos
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte4">
+                            <i class="bi bi-box-seam me-1"></i>Inventario
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte5">
+                            <i class="bi bi-graph-down me-1"></i>Menos Vendidos
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte6">
+                            <i class="bi bi-x-circle me-1"></i>Sin Stock
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte7">
+                            <i class="bi bi-receipt me-1"></i>Detalle Factura
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte8">
+                            <i class="bi bi-box-arrow-in-down me-1"></i>Ingresos Inventario
+                        </button>
+                    </li>
+
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte9">
+                            <i class="bi bi-exclamation-triangle me-1"></i>Stock Bajo
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reporte10">
+                            <i class="bi bi-shop me-1"></i>Por Tienda
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Reporte 1: Facturación por Método de Pago -->
+                    <div class="tab-pane fade show active" id="reporte1">
+                        <div class="card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-credit-card me-2"></i>
+                                    Reporte de Facturación por Método de Pago
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Fecha Inicio</label>
+                                        <input type="date" id="r1FechaInicio" class="form-control">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Fecha Fin</label>
+                                        <input type="date" id="r1FechaFin" class="form-control">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                            <i class="bi bi-search me-1"></i>Generar Reporte
+                                        </button>
+                                        <div class="col-md-4">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                                <i class="bi bi-search me-1"></i>Generar Reporte
+                                            </button>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="exportarReporte('facturacion-metodo-pago', 'pdf')">
+                                                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm"
+                                                    onclick="exportarReporte('facturacion-metodo-pago', 'excel')">
+                                                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Método de Pago</th>
+                                                <th>Cantidad de Facturas</th>
+                                                <th>Total Facturado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte1">
+                                            <tr>
+                                                <td colspan="3" class="text-center text-muted">
+                                                    Seleccione rango de fechas y genere el reporte
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 2: Productos que Más Ingresos Generan -->
+                    <div class="tab-pane fade" id="reporte2">
+                        <div class="card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-currency-dollar me-2"></i>
+                                    Productos que Más Ingresos Generan
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Fecha Inicio</label>
+                                        <input type="date" id="r2FechaInicio" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Fecha Fin</label>
+                                        <input type="date" id="r2FechaFin" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Límite</label>
+                                        <input type="number" id="r2Limite" class="form-control" value="10" min="1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button class="btn btn-success w-100" onclick="generarReporte2()">
+                                            <i class="bi bi-search me-1"></i>Generar Reporte
+                                        </button>
+                                        <div class="col-md-4">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                                <i class="bi bi-search me-1"></i>Generar Reporte
+                                            </button>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="exportarReporte('productos-mas-ingresos', 'pdf')">
+                                                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm"
+                                                    onclick="exportarReporte('productos-mas-ingresos', 'excel')">
+                                                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Producto</th>
+                                                <th>Cantidad Vendida</th>
+                                                <th>Total Ingresos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte2">
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">
+                                                    Seleccione rango de fechas y genere el reporte
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 3: Productos Más Vendidos -->
+                    <div class="tab-pane fade" id="reporte3">
+                        <div class="card">
+                            <div class="card-header bg-info text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-graph-up me-2"></i>
+                                    Productos Más Vendidos (Cantidad)
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Fecha Inicio</label>
+                                        <input type="date" id="r3FechaInicio" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Fecha Fin</label>
+                                        <input type="date" id="r3FechaFin" class="form-control">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">Límite</label>
+                                        <input type="number" id="r3Limite" class="form-control" value="10" min="1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button class="btn btn-info w-100" onclick="generarReporte3()">
+                                            <i class="bi bi-search me-1"></i>Generar Reporte
+                                        </button>
+                                        <div class="col-md-4">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                                <i class="bi bi-search me-1"></i>Generar Reporte
+                                            </button>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="exportarReporte('productos-mas-vendidos', 'pdf')">
+                                                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm"
+                                                    onclick="exportarReporte('productos-mas-vendidos', 'excel')">
+                                                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Producto</th>
+                                                <th>Cantidad Vendida</th>
+                                                <th>Total Ingresos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte3">
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">
+                                                    Seleccione rango de fechas y genere el reporte
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 4: Inventario General -->
+                    <div class="tab-pane fade" id="reporte4">
+                        <div class="card">
+                            <div class="card-header bg-warning text-dark">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-box-seam me-2"></i>
+                                    Inventario General
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-warning mb-3" onclick="generarReporte4()">
+                                    <i class="bi bi-search me-1"></i>Generar Reporte
+                                </button>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                        <i class="bi bi-search me-1"></i>Generar Reporte
+                                    </button>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <div class="btn-group w-100">
+                                        <button class="btn btn-outline-danger btn-sm"
+                                            onclick="exportarReporte('inventario-general', 'pdf')">
+                                            <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm"
+                                            onclick="exportarReporte('inventario-general', 'excel')">
+                                            <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Categoría</th>
+                                                <th>Sucursal</th>
+                                                <th>Stock Actual</th>
+                                                <th>Stock Mínimo</th>
+                                                <th>Estado</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte4">
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">
+                                                    Genere el reporte para ver los datos
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 5: Productos Menos Vendidos -->
+                    <div class="tab-pane fade" id="reporte5">
+                        <div class="card">
+                            <div class="card-header bg-secondary text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-graph-down me-2"></i>
+                                    Productos Menos Vendidos
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label">Límite</label>
+                                        <input type="number" id="r5Limite" class="form-control" value="10" min="1">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button class="btn btn-secondary w-100" onclick="generarReporte5()">
+                                            <i class="bi bi-search me-1"></i>Generar Reporte
+                                        </button>
+                                        <div class="col-md-4">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                                <i class="bi bi-search me-1"></i>Generar Reporte
+                                            </button>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="exportarReporte('productos-menos-vendidos', 'pdf')">
+                                                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm"
+                                                    onclick="exportarReporte('productos-menos-vendidos', 'excel')">
+                                                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Producto</th>
+                                                <th>Cantidad Vendida</th>
+                                                <th>Total Ingresos</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte5">
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">
+                                                    Seleccione rango de fechas y genere el reporte
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 6: Productos Sin Stock -->
+                    <div class="tab-pane fade" id="reporte6">
+                        <div class="card">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-x-circle me-2"></i>
+                                    Productos Sin Stock
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-danger mb-3" onclick="generarReporte6()">
+                                    <i class="bi bi-search me-1"></i>Generar Reporte
+                                </button>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                        <i class="bi bi-search me-1"></i>Generar Reporte
+                                    </button>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <div class="btn-group w-100">
+                                        <button class="btn btn-outline-danger btn-sm"
+                                            onclick="exportarReporte('productos-sin-stock', 'pdf')">
+                                            <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm"
+                                            onclick="exportarReporte('productos-sin-stock', 'excel')">
+                                            <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Categoría</th>
+                                                <th>Sucursal</th>
+                                                <th>Stock Actual</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte6">
+                                            <tr>
+                                                <td colspan="4" class="text-center text-muted">
+                                                    Genere el reporte para ver los datos
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 7: Detalle de Factura -->
+                    <div class="tab-pane fade" id="reporte7">
+                        <div class="card">
+                            <div class="card-header" style="background: #673ab7; color: white;">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-receipt me-2"></i>
+                                    Detalle Completo de Factura
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-8">
+                                        <label class="form-label">Número de Factura</label>
+                                        <input type="text" id="r7NumeroFactura" class="form-control"
+                                            placeholder="Ej: A-00000001">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button class="btn w-100" style="background: #673ab7; color: white;"
+                                            onclick="generarReporte7()">
+                                            <i class="bi bi-search me-1"></i>Buscar Factura
+                                        </button>
+                                        <div class="col-md-4">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                                <i class="bi bi-search me-1"></i>Generar Reporte
+                                            </button>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="exportarReporte('detalle-factura', 'numero_factura', 'pdf')">
+                                                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm"
+                                                    onclick="exportarReporte('detalle-factura', 'numero_factura', 'excel')">
+                                                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- Encabezado de Factura -->
+                                <div id="r7Encabezado" style="display: none;">
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light">
+                                            <h6 class="mb-0">Información General</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <p><strong>N° Factura:</strong> <span id="r7NumFac"></span></p>
+                                                    <p><strong>Serie/Correlativo:</strong> <span id="r7SerieCor"></span>
+                                                    </p>
+                                                    <p><strong>Fecha Emisión:</strong> <span id="r7Fecha"></span></p>
+                                                    <p><strong>Tipo Venta:</strong> <span id="r7TipoVenta"></span></p>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <p><strong>Cliente:</strong> <span id="r7Cliente"></span></p>
+                                                    <p><strong>NIT:</strong> <span id="r7Nit"></span></p>
+                                                    <p><strong>Cajero:</strong> <span id="r7Cajero"></span></p>
+                                                    <p><strong>Estado:</strong> <span id="r7Estado"></span></p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Detalle de Productos -->
+                                    <div class="card mb-3">
+                                        <div class="card-header bg-light">
+                                            <h6 class="mb-0">Productos</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Producto</th>
+                                                        <th>Cantidad</th>
+                                                        <th>Precio Unit.</th>
+                                                        <th>Subtotal</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="r7Productos"></tbody>
+                                            </table>
+                                            <div class="text-end">
+                                                <p><strong>Subtotal:</strong> <span id="r7Subtotal"></span></p>
+                                                <p><strong>Descuento:</strong> <span id="r7Descuento"></span></p>
+                                                <p><strong>Total:</strong> <span id="r7Total"
+                                                        class="fs-4 text-success"></span></p>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Métodos de Pago -->
+                                    <div class="card">
+                                        <div class="card-header bg-light">
+                                            <h6 class="mb-0">Métodos de Pago</h6>
+                                        </div>
+                                        <div class="card-body">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Método</th>
+                                                        <th>Monto</th>
+                                                        <th>Referencia</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="r7Pagos"></tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="r7NoEncontrado" style="display: none;" class="text-center text-muted py-5">
+                                    <i class="bi bi-search" style="font-size: 3rem;"></i>
+                                    <p class="mt-3">Factura no encontrada</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 8: Ingresos al Inventario -->
+                    <div class="tab-pane fade" id="reporte8">
+                        <div class="card">
+                            <div class="card-header" style="background: #009688; color: white;">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-box-arrow-in-down me-2"></i>
+                                    Ingresos al Inventario (Lotes)
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-5">
+                                        <label class="form-label">Fecha Inicio</label>
+                                        <input type="date" id="r8FechaInicio" class="form-control">
+                                    </div>
+                                    <div class="col-md-5">
+                                        <label class="form-label">Fecha Fin</label>
+                                        <input type="date" id="r8FechaFin" class="form-control">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button class="btn w-100" style="background: #009688; color: white;"
+                                            onclick="generarReporte8()">
+                                            <i class="bi bi-search me-1"></i>Generar
+                                        </button>
+                                        <div class="col-md-4">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                                <i class="bi bi-search me-1"></i>Generar Reporte
+                                            </button>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="exportarReporte('ingresos-inventario', 'pdf')">
+                                                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm"
+                                                    onclick="exportarReporte('ingresos-inventario', 'excel')">
+                                                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover table-sm">
+                                        <thead>
+                                            <tr>
+                                                <th>Código Lote</th>
+                                                <th>Fecha</th>
+                                                <th>Producto</th>
+                                                <th>Proveedor</th>
+                                                <th>Cantidad</th>
+                                                <th>Costo Unit.</th>
+                                                <th>Costo Total</th>
+                                                <th>Sucursales</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte8">
+                                            <tr>
+                                                <td colspan="8" class="text-center text-muted">
+                                                    Seleccione rango de fechas y genere el reporte
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 9: Stock Bajo Mínimo -->
+                    <div class="tab-pane fade" id="reporte9">
+                        <div class="card">
+                            <div class="card-header" style="background: #ff9800; color: white;">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    Productos con Stock Bajo el Mínimo
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <button class="btn btn-warning mb-3" onclick="generarReporte9()">
+                                    <i class="bi bi-search me-1"></i>Generar Reporte
+                                </button>
+                                <div class="col-md-4">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                        <i class="bi bi-search me-1"></i>Generar Reporte
+                                    </button>
+                                </div>
+                                <div class="col-md-12 mt-2">
+                                    <div class="btn-group w-100">
+                                        <button class="btn btn-outline-danger btn-sm"
+                                            onclick="exportarReporte('stock-bajo-minimo', 'pdf')">
+                                            <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                        </button>
+                                        <button class="btn btn-outline-success btn-sm"
+                                            onclick="exportarReporte('stock-bajo-minimo', 'excel')">
+                                            <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Categoría</th>
+                                                <th>Sucursal</th>
+                                                <th>Stock Actual</th>
+                                                <th>Stock Mínimo</th>
+                                                <th>Diferencia</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte9">
+                                            <tr>
+                                                <td colspan="6" class="text-center text-muted">
+                                                    Genere el reporte para ver los datos
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reporte 10: Inventario por Tienda -->
+                    <div class="tab-pane fade" id="reporte10">
+                        <div class="card">
+                            <div class="card-header" style="background: #9c27b0; color: white;">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-shop me-2"></i>
+                                    Inventario por Tienda/Sucursal
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label class="form-label">Sucursal</label>
+                                        <select id="r10Sucursal" class="form-select">
+                                            <option value="">Cargando...</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button class="btn w-100" style="background: #9c27b0; color: white;"
+                                            onclick="generarReporte10()">
+                                            <i class="bi bi-search me-1"></i>Generar Reporte
+                                        </button>
+                                        <div class="col-md-4">
+                                            <label class="form-label">&nbsp;</label>
+                                            <button class="btn btn-primary w-100" onclick="generarReporte1()">
+                                                <i class="bi bi-search me-1"></i>Generar Reporte
+                                            </button>
+                                        </div>
+                                        <div class="col-md-12 mt-2">
+                                            <div class="btn-group w-100">
+                                                <button class="btn btn-outline-danger btn-sm"
+                                                    onclick="exportarReporte('inventario-por-tienda', 'sucursal_id', 'pdf')">
+                                                    <i class="bi bi-file-pdf me-1"></i>Exportar PDF
+                                                </button>
+                                                <button class="btn btn-outline-success btn-sm"
+                                                    onclick="exportarReporte('inventario-por-tienda', 'sucursal_id', 'excel')">
+                                                    <i class="bi bi-file-earmark-excel me-1"></i>Exportar Excel
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="table table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>Producto</th>
+                                                <th>Categoría</th>
+                                                <th>Stock Actual</th>
+                                                <th>Stock Mínimo</th>
+                                                <th>Stock Máximo</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="tablaReporte10">
+                                            <tr>
+                                                <td colspan="5" class="text-center text-muted">
+                                                    Seleccione una sucursal y genere el reporte
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script src="../js/admin-layout.js"></script>
+    <script src="../js/reportes.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarTituloPagina('Reportes del Sistema');
+            actualizarBreadcrumb(['Reportes']);
+
+            // Configurar fechas por defecto (último mes)
+            const hoy = new Date();
+            const hace30Dias = new Date(hoy);
+            hace30Dias.setDate(hoy.getDate() - 30);
+
+            const fechaHoy = hoy.toISOString().split('T')[0];
+            const fechaHace30 = hace30Dias.toISOString().split('T')[0];
+
+            // Reporte 1
+            document.getElementById('r1FechaInicio').value = fechaHace30;
+            document.getElementById('r1FechaFin').value = fechaHoy;
+
+            // Reporte 2
+            document.getElementById('r2FechaInicio').value = fechaHace30;
+            document.getElementById('r2FechaFin').value = fechaHoy;
+
+            // Reporte 3
+            document.getElementById('r3FechaInicio').value = fechaHace30;
+            document.getElementById('r3FechaFin').value = fechaHoy;
+
+            // Reporte 5
+            document.getElementById('r5FechaInicio').value = fechaHace30;
+            document.getElementById('r5FechaFin').value = fechaHoy;
+
+            // Reporte 8
+            document.getElementById('r8FechaInicio').value = fechaHace30;
+            document.getElementById('r8FechaFin').value = fechaHoy;
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Paints E-commerce</title>
+    
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold text-primary" href="/">
+                <i class="bi bi-paint-bucket"></i> PAINTS
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">
+                            <i class="bi bi-house-door"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/carrito.html">
+                            <i class="bi bi-cart"></i> Carrito
+                        </a>
+                    </li>
+                    <li class="nav-item" id="navUsuario"></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Checkout Container -->
+    <div class="checkout-container">
+        <!-- Steps -->
+        <div class="checkout-steps">
+            <div class="step completed">
+                <div class="step-number">1</div>
+                <div class="step-text">Carrito</div>
+            </div>
+            <div class="step active">
+                <div class="step-number">2</div>
+                <div class="step-text">Datos</div>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <div class="step-text">Pago</div>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <div class="step-text">Confirmación</div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Formulario de Checkout -->
+            <div class="col-lg-7">
+                <!-- Información del Cliente -->
+                <div class="checkout-section">
+                    <h4 class="mb-4">
+                        <i class="bi bi-person-circle me-2"></i>
+                        Información del Cliente
+                    </h4>
+                    
+                    <form id="formCheckout">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre *</label>
+                                <input type="text" class="form-control" id="nombre" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="apellido">
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Email *</label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Teléfono *</label>
+                                <input type="tel" class="form-control" id="telefono" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">NIT</label>
+                                <input type="text" class="form-control" id="nit" placeholder="CF">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">DPI</label>
+                                <input type="text" class="form-control" id="dpi">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Dirección de Entrega *</label>
+                            <textarea class="form-control" id="direccion" rows="3" required></textarea>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Departamento *</label>
+                                <select class="form-select" id="departamento" required>
+                                    <option value="">Seleccione...</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Municipio *</label>
+                                <select class="form-select" id="municipio" required>
+                                    <option value="">Seleccione departamento primero...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Métodos de Pago -->
+                <div class="checkout-section">
+                    <h4 class="mb-4">
+                        <i class="bi bi-credit-card me-2"></i>
+                        Método de Pago
+                    </h4>
+                    
+                    <div id="metodosPago">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+
+                <!-- Notas adicionales -->
+                <div class="checkout-section">
+                    <h5 class="mb-3">Notas adicionales (opcional)</h5>
+                    <textarea class="form-control" id="notas" rows="3" placeholder="Instrucciones especiales para la entrega..."></textarea>
+                </div>
+            </div>
+
+            <!-- Resumen de la Orden -->
+            <div class="col-lg-5">
+                <div class="checkout-section order-summary">
+                    <h4 class="mb-4">
+                        <i class="bi bi-bag-check me-2"></i>
+                        Resumen de la Orden
+                    </h4>
+                    
+                    <div id="resumenProductos">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Subtotal:</span>
+                        <span id="subtotal">Q0.00</span>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Descuento:</span>
+                        <span id="descuento" class="text-success">-Q0.00</span>
+                    </div>
+                    
+                    <hr>
+                    
+                    <div class="d-flex justify-content-between summary-total">
+                        <span>Total:</span>
+                        <span id="total">Q0.00</span>
+                    </div>
+                    
+                    <button class="btn btn-primary btn-lg w-100 mt-4" onclick="confirmarPedido()">
+                        <i class="bi bi-check-circle me-2"></i>
+                        Confirmar Pedido
+                    </button>
+                    
+                    <a href="/carrito.html" class="btn btn-outline-secondary w-100 mt-2">
+                        <i class="bi bi-arrow-left me-2"></i>
+                        Volver al Carrito
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white text-center py-4 mt-5">
+        <div class="container">
+            <p class="mb-0">&copy; 2025 Paints E-commerce. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/carrito.js"></script>
+    <script src="js/ubicacion.js"></script>
+    <script src="js/checkout.js"></script>
+</body>
+</html>
