@@ -1,4 +1,19 @@
-const { sequelize } = require('../config/database.config');
+const Sequelize = require("sequelize");
+const dbConfig = require("../config/database.config");
+
+// Crear instancia de Sequelize
+const sequelize = new Sequelize(
+  dbConfig.DB,
+  dbConfig.USER,
+  dbConfig.PASSWORD,
+  {
+    host: dbConfig.HOST,
+    port: dbConfig.PORT,
+    dialect: dbConfig.dialect,
+    pool: dbConfig.pool,
+    logging: false,
+  }
+);
 
 // Importamos todos los modelos
 const Rol = require('./rol.model');
