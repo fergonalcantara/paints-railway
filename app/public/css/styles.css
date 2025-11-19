@@ -1587,6 +1587,187 @@ body {
 }
 
 /* ========================================
+   MÓDULO COTIZACIÓN - IMPRESIÓN
+   ======================================== */
+
+.cotizacion-print {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Arial', sans-serif;
+    background: white;
+}
+
+.cotizacion-header {
+    text-align: center;
+    border-bottom: 3px solid var(--primary);
+    padding-bottom: 20px;
+    margin-bottom: 30px;
+}
+
+.cotizacion-header h1 {
+    color: var(--primary);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.cotizacion-header p {
+    color: var(--text-secondary);
+    margin: 0.25rem 0;
+}
+
+.cotizacion-info {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.cotizacion-info-box {
+    background: var(--light-gray);
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.cotizacion-info-box h3 {
+    color: var(--primary);
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    border-bottom: 2px solid var(--secondary);
+    padding-bottom: 5px;
+}
+
+.cotizacion-info-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 0.95rem;
+}
+
+.cotizacion-info-row strong {
+    color: var(--text);
+}
+
+.cotizacion-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.cotizacion-table thead {
+    background: var(--primary);
+    color: white;
+}
+
+.cotizacion-table th,
+.cotizacion-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+}
+
+.cotizacion-table th {
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+.cotizacion-table tbody tr:hover {
+    background: var(--light-gray);
+}
+
+.cotizacion-table .text-right {
+    text-align: right;
+}
+
+.cotizacion-table .text-center {
+    text-align: center;
+}
+
+.cotizacion-totales {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border);
+}
+
+.cotizacion-total-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 1rem;
+}
+
+.cotizacion-total-row.final {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--primary);
+    border-top: 2px solid var(--primary);
+    margin-top: 10px;
+    padding-top: 15px;
+}
+
+.cotizacion-footer {
+    margin-top: 50px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border);
+    text-align: center;
+    color: var(--text-secondary);
+}
+
+.cotizacion-footer p {
+    margin: 5px 0;
+}
+
+/* Botones de acción */
+.cotizacion-actions {
+    margin-bottom: 30px;
+    display: flex;
+    gap: 10px;
+}
+
+.cotizacion-actions .btn {
+    flex: 1;
+}
+
+/* Estilos para impresión */
+@media print {
+    body {
+        background: white;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .cotizacion-actions {
+        display: none !important;
+    }
+    
+    .admin-sidebar,
+    .admin-content-header,
+    .admin-breadcrumb,
+    .sidebar-toggle,
+    .no-print {
+        display: none !important;
+    }
+    
+    .cotizacion-print {
+        max-width: 100%;
+        padding: 0;
+        box-shadow: none;
+    }
+    
+    .cotizacion-table {
+        box-shadow: none;
+    }
+}
+
+@page {
+    size: letter;
+    margin: 1cm;
+}
+
+/* ========================================
    TARJETAS DE ESTADÍSTICAS
    ======================================== */
 

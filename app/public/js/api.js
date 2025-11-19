@@ -196,6 +196,11 @@ async function obtenerProveedores(params = {}) {
 }
 
 // ========== COTIZACIONES ==========
+async function listarCotizaciones(params = {}) {
+    const queryString = new URLSearchParams(params).toString();
+    return await fetchAPI(`/cotizaciones${queryString ? '?' + queryString : ''}`);
+}
+
 async function crearCotizacion(datos) {
     return await fetchAPI('/cotizaciones', {
         method: 'POST',
@@ -203,9 +208,15 @@ async function crearCotizacion(datos) {
     });
 }
 
-async function obtenerCotizaciones(params = {}) {
-    const queryString = new URLSearchParams(params).toString();
-    return await fetchAPI(`/cotizaciones${queryString ? '?' + queryString : ''}`);
+async function obtenerCotizacionPorNumero(numero) {
+    return await fetchAPI(`/cotizaciones/${numero}`);
+}
+
+async function cambiarEstadoCotizacion(id, nuevoEstado) {
+    return await fetchAPI(`/cotizaciones/${id}/estado`, {
+        method: 'PUT',
+        body: JSON.stringify({ estado: nuevoEstado })
+    });
 }
 
 // ========== AUTENTICACIÓN ==========

@@ -122,27 +122,27 @@ function generarMenuSegunRol(rol) {
                     { icon: 'bi-building', texto: 'Inventario por Sucursal', url: '/admin/inventario.html' }
                 ]
             },
-            {
-                seccion: 'Catálogos',
-                items: [
-                    { icon: 'bi-tag', texto: 'Categorías', url: '/admin/categorias.html' },
-                    { icon: 'bi-award', texto: 'Marcas', url: '/admin/marcas.html' },
-                    { icon: 'bi-palette', texto: 'Colores', url: '/admin/colores.html' }
-                ]
-            },
-            {
-                seccion: 'Usuarios',
-                items: [
-                    { icon: 'bi-people', texto: 'Usuarios', url: '/admin/usuarios.html' },
-                    { icon: 'bi-person-badge', texto: 'Roles y Permisos', url: '/admin/roles.html' },
-                    { icon: 'bi-person-check', texto: 'Clientes', url: '/admin/clientes.html' }
-                ]
-            },
+            //{
+                //seccion: 'Catálogos',
+                //items: [
+                //    { icon: 'bi-tag', texto: 'Categorías', url: '/admin/categorias.html' },
+                //    { icon: 'bi-award', texto: 'Marcas', url: '/admin/marcas.html' },
+                //    { icon: 'bi-palette', texto: 'Colores', url: '/admin/colores.html' }
+                //]
+            //},
+            //{
+            //    seccion: 'Usuarios',
+            //    items: [
+            //        { icon: 'bi-people', texto: 'Usuarios', url: '/admin/usuarios.html' },
+            //        { icon: 'bi-person-badge', texto: 'Roles y Permisos', url: '/admin/roles.html' },
+            //        { icon: 'bi-person-check', texto: 'Clientes', url: '/admin/clientes.html' }
+            //    ]
+            //},
             {
                 seccion: 'Configuración',
                 items: [
-                    { icon: 'bi-shop', texto: 'Sucursales', url: '/admin/sucursales.html' },
-                    { icon: 'bi-truck', texto: 'Proveedores', url: '/admin/proveedores.html' },
+                    //{ icon: 'bi-shop', texto: 'Sucursales', url: '/admin/sucursales.html' },
+                    //{ icon: 'bi-truck', texto: 'Proveedores', url: '/admin/proveedores.html' },
                     { icon: 'bi-bar-chart-line', texto: 'Reportes', url: '/admin/reportes.html' }
                 ]
             }

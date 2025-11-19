@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización - Paints</title>
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <!-- Estilos personalizados -->
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+
+<body>
+    <div class="cotizacion-print">
+        <!-- Botones de acción (no se imprimen) -->
+        <div class="cotizacion-actions no-print">
+            <button class="btn btn-primary" onclick="window.print()">
+                <i class="bi bi-printer me-2"></i>Imprimir Cotización
+            </button>
+            <button class="btn btn-secondary" onclick="window.close()">
+                <i class="bi bi-x-circle me-2"></i>Cerrar
+            </button>
+        </div>
+
+        <!-- Encabezado -->
+        <div class="cotizacion-header">
+            <h1>PAINTS E-COMMERCE</h1>
+            <p>Sistema de Gestión de Ventas</p>
+            <p><strong>NIT:</strong> 12345678-9</p>
+            <p><strong>Dirección:</strong> Ciudad de Guatemala, Guatemala</p>
+            <p><strong>Tel:</strong> (502) 2345-6789</p>
+        </div>
+
+        <!-- Información de cotizacion y cliente -->
+        <div class="cotizacion-info">
+            <div class="cotizacion-info-box">
+                <h3>Información de Cotización</h3>
+                <div class="cotizacion-info-row">
+                    <strong>Número de Cotización:</strong>
+                    <span id="numeroCotización">-</span>
+                </div>
+                <div class="cotizacion-info-row">
+                    <strong>Fecha de Emisión:</strong>
+                    <span id="fechaEmision">-</span>
+                </div>
+                <div class="cotizacion-info-row">
+                    <strong>Tipo de Venta:</strong>
+                    <span id="tipoVenta">-</span>
+                </div>
+                <div class="cotizacion-info-row">
+                    <strong>Sucursal:</strong>
+                    <span id="sucursal">-</span>
+                </div>
+            </div>
+
+            <div class="cotizacion-info-box">
+                <h3>Información del Cliente</h3>
+                <div class="cotizacion-info-row">
+                    <strong>Nombre:</strong>
+                    <span id="clienteNombre">-</span>
+                </div>
+                <div class="cotizacion-info-row">
+                    <strong>NIT:</strong>
+                    <span id="clienteNit">-</span>
+                </div>
+                <div class="cotizacion-info-row">
+                    <strong>Dirección:</strong>
+                    <span id="clienteDireccion">-</span>
+                </div>
+                <div class="cotizacion-info-row">
+                    <strong>Cajero:</strong>
+                    <span id="cajero">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detalle de productos -->
+        <table class="cotizacion-table">
+            <thead>
+                <tr>
+                    <th class="text-center">Cant.</th>
+                    <th>Producto</th>
+                    <th>SKU</th>
+                    <th class="text-right">Precio Unit.</th>
+                    <th class="text-right">Subtotal</th>
+                </tr>
+            </thead>
+            <tbody id="detallesBody">
+                <!-- Se llena dinámicamente -->
+            </tbody>
+        </table>
+
+        <!-- Totales -->
+        <div class="cotizacion-totales">
+            <div class="cotizacion-total-row">
+                <strong>Subtotal:</strong>
+                <span>Q<span id="subtotal">0.00</span></span>
+            </div>
+            <div class="cotizacion-total-row">
+                <strong>Descuento:</strong>
+                <span>Q<span id="descuento">0.00</span></span>
+            </div>
+            <div class="cotizacion-total-row">
+                <strong>IVA (12%):</strong>
+                <span>Q<span id="iva">0.00</span></span>
+            </div>
+            <div class="cotizacion-total-row final">
+                <strong>TOTAL A PAGAR:</strong>
+                <strong>Q<span id="total">0.00</span></strong>
+            </div>
+        </div>
+
+        <!-- Métodos de pago -->
+        <div class="cotizacion-info-box" style="margin-top: 30px;">
+            <h3>Métodos de Pago</h3>
+            <div id="metodosPago">
+                <!-- Se llena dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Pie de página -->
+        <div class="cotizacion-footer">
+            <p><strong>¡Gracias por su preferencia!</strong></p>
+            <p>Para cualquier consulta o reclamo, presente esta cotizacion</p>
+            <p>www.paints.com | info@paints.com</p>
+            <p class="no-print" style="margin-top: 20px; font-size: 0.85rem;">
+                Documento generado el <span id="fechaImpresion"></span>
+            </p>
+        </div>
+    </div>
+
+    <script src="../js/api.js"></script>
+    <script src="../js/utils.js"></script>
+    <script>
+        async function cargarCotización() {
+            const params = new URLSearchParams(window.location.search);
+            const numeroCotizacion = params.get('numero');
+
+            if (!numeroCotizacion) {
+                alert('No se especificó número de cotizacion');
+                window.close();
+                return;
+            }
+
+            try {
+                const resultado = await obtenerCotizacionPorNumero(numeroCotizacion);
+
+                if (!resultado.success) {
+                    throw new Error(resultado.message);
+                }
+
+                const cotizacion = resultado.data;
+
+                console.log('Cotización cargada:', cotizacion); // Debug
+
+                // Información general
+                document.getElementById('numeroCotización').textContent = cotizacion.numero_cotizacion;
+                document.getElementById('fechaEmision').textContent = formatearFecha(cotizacion.fecha_emision || cotizacion.created_at);
+                document.getElementById('tipoVenta').textContent = cotizacion.tipo_venta === 'online' ? 'En Línea' : 'Física';
+                document.getElementById('sucursal').textContent = cotizacion.sucursal?.nombre || 'N/A';
+
+                // Cliente
+                document.getElementById('clienteNombre').textContent = cotizacion.cliente_nombre || 'N/A';
+                document.getElementById('clienteNit').textContent = cotizacion.cliente_nit || 'CF';
+                document.getElementById('clienteDireccion').textContent = cotizacion.cliente_direccion || '-';
+                document.getElementById('cajero').textContent = cotizacion.usuario_emite ?
+                    `${cotizacion.usuario_emite.nombre} ${cotizacion.usuario_emite.apellido}` : 'N/A';
+
+                //  Convertir a números con parseFloat
+                const subtotal = parseFloat(cotizacion.subtotal) || 0;
+                const descuento = parseFloat(cotizacion.descuento_total) || 0;
+                const total = parseFloat(cotizacion.total) || 0;
+
+                // Calcular IVA (el total ya incluye IVA, debemos extraerlo)
+                const iva = total - subtotal + descuento;
+
+                // Mostrar totales
+                document.getElementById('subtotal').textContent = subtotal.toFixed(2);
+                document.getElementById('descuento').textContent = descuento.toFixed(2);
+                document.getElementById('iva').textContent = iva.toFixed(2);
+                document.getElementById('total').textContent = total.toFixed(2);
+
+                // Detalles
+                const tbody = document.getElementById('detallesBody');
+
+                if (!cotizacion.detalles || cotizacion.detalles.length === 0) {
+                    tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center text-muted">
+                            No hay detalles de productos
+                        </td>
+                    </tr>
+                `;
+                } else {
+                    tbody.innerHTML = cotizacion.detalles.map(detalle => {
+                        const cantidad = parseInt(detalle.cantidad) || 0;
+                        const precioUnitario = parseFloat(detalle.precio_unitario) || 0;
+                        const subtotalItem = parseFloat(detalle.subtotal) || (cantidad * precioUnitario);
+
+                        return `
+                        <tr>
+                            <td class="text-center">${cantidad}</td>
+                            <td>${detalle.producto_nombre || detalle.producto?.nombre || 'N/A'}</td>
+                            <td>${detalle.producto_sku || detalle.producto?.sku || '-'}</td>
+                            <td class="text-right">Q${precioUnitario.toFixed(2)}</td>
+                            <td class="text-right">Q${subtotalItem.toFixed(2)}</td>
+                        </tr>
+                    `;
+                    }).join('');
+                }
+
+                // Métodos de pago
+                const metodosPagoDiv = document.getElementById('metodosPago');
+
+                if (!cotizacion.pagos || cotizacion.pagos.length === 0) {
+                    metodosPagoDiv.innerHTML = `
+                    <div class="cotizacion-info-row">
+                        <span class="text-muted">No hay información de métodos de pago</span>
+                    </div>
+                `;
+                } else {
+                    metodosPagoDiv.innerHTML = cotizacion.pagos.map(pago => {
+                        const monto = parseFloat(pago.monto) || 0;
+                        const nombreMetodo = pago.metodo_pago?.nombre || 'N/A';
+
+                        return `
+                        <div class="cotizacion-info-row">
+                            <strong>${nombreMetodo}:</strong>
+                            <span>Q${monto.toFixed(2)}</span>
+                        </div>
+                    `;
+                    }).join('');
+                }
+
+                // Fecha de impresión
+                document.getElementById('fechaImpresion').textContent = new Date().toLocaleString('es-GT');
+
+            } catch (error) {
+                console.error(' Error:', error);
+                alert('Error al cargar la cotizacion: ' + error.message);
+            }
+        }
+
+        // Cargar al inicio
+        cargarCotización();
+    </script>
+
+</body>
+
+</html>
