@@ -12,27 +12,26 @@ const routes = require('./routes');
 // ==================================
 const corsOptions = {
   origin: function (origin, callback) {
-    // Lista blanca de orígenes permitidos
     const whitelist = [
       'http://localhost:3000',
-      'http://localhost:5173', // Vite dev server
-      'http://127.0.0.1:3000',
-      process.env.FRONTEND_URL, // Variable de Railway
+      'http://localhost:5173',
       process.env.RAILWAY_PUBLIC_DOMAIN ? `https://${process.env.RAILWAY_PUBLIC_DOMAIN}` : null
-    ].filter(Boolean); // Eliminar valores null/undefined
+    ].filter(Boolean);
 
-    // En desarrollo, permitir requests sin origin (Postman, Thunder Client)
-    if (!origin && appConfig.env === 'development') {
+    // ✅ Permitir sin origin (Railway interno)
+    if (!origin) {
       return callback(null, true);
     }
 
-    if (whitelist.indexOf(origin) !== -1 || appConfig.env === 'development') {
+    if (whitelist.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
-      console.warn(`CORS blocked origin: ${origin}`);
+      console.warn(`❌ CORS blocked: ${origin}`);
+      console.warn('Whitelist:', whitelist);
       callback(new Error('Not allowed by CORS'));
     }
-  },
+  }
+  ,
   credentials: true, // Permitir cookies/sesiones
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
@@ -66,13 +65,15 @@ app.use(session({
   secret: appConfig.security.sessionSecret,
   resave: false,
   saveUninitialized: false,
+  proxy: true,
   cookie: {
     maxAge: appConfig.security.sessionMaxAge,
     httpOnly: true,
-    secure: appConfig.security.cookieSecure, // true en producción (HTTPS)
-    sameSite: appConfig.env === 'production' ? 'none' : 'lax' // 🆕 Para CORS
+    secure: appConfig.env === 'production',
+    sameSite: appConfig.env === 'production' ? 'none' : 'lax'
   }
 }));
+
 
 // ==================================
 // ARCHIVOS ESTÁTICOS
@@ -167,7 +168,7 @@ app.use((req, res) => {
 // ==================================
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
-  
+
   // Si es un error de CORS, dar más información
   if (err.message === 'Not allowed by CORS') {
     return res.status(403).json({
