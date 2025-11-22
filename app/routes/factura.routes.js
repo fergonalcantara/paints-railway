@@ -32,7 +32,6 @@ router.get('/:numero_factura',
  */
 router.post('/',
     verificarAutenticacion,
-    esEmpleado,
     tienePermiso('crear_venta'),
     facturaController.crearFactura
 );
