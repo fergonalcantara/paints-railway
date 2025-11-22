@@ -13,7 +13,7 @@ const API_BASE_URL = (() => {
     return '/api';
 })();
 
-console.log('🌐 API Base URL:', API_BASE_URL);
+console.log('API Base URL:', API_BASE_URL);
 
 // Helper para hacer peticiones
 async function fetchAPI(endpoint, options = {}) {
