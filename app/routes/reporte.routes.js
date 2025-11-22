@@ -60,10 +60,10 @@ router.get('/productos-sin-stock',
 );
 
 /**
- * GET /api/reportes/factura/:numero_factura
+ * GET /api/reportes/detalle-factura/:numero_factura
  * Reporte 7: Detalle de factura
  */
-router.get('/factura/:numero_factura',
+router.get('/detalle-factura/:numero_factura',
     reporteController.detalleFactura
 );
 
@@ -84,10 +84,10 @@ router.get('/stock-bajo-minimo',
 );
 
 /**
- * GET /api/reportes/inventario-tienda/:sucursal_id
+ * GET /api/reportes/inventario-por-tienda/:sucursal_id
  * Reporte 10: Inventario por tienda
  */
-router.get('/inventario-tienda/:sucursal_id',
+router.get('/inventario-por-tienda/:sucursal_id',
     reporteController.inventarioPorTienda
 );
 

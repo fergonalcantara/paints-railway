@@ -17,32 +17,35 @@ exports.facturacionMetodoPago = async (req, res) => {
             });
         }
         
-        // CORRECCIÓN: Los CALL devuelven [[datos], metadata]
         const resultados = await sequelize.query(
             'CALL sp_reporte_facturacion_metodo_pago(:fecha_inicio, :fecha_fin)',
             { replacements: { fecha_inicio, fecha_fin } }
         );
-        
-        // Primer elemento es el array de resultados
-        const datos = resultados[0];
-        
-        // Si está vacío, devolver array vacío
-        if (!datos || datos.length === 0) {
+
+        // Si está vacío, devolver datos en ceros
+        if (!resultados || resultados.length === 0 || !resultados[0]) {
             return res.json({
                 success: true,
-                data: [],
-                periodo: { fecha_inicio, fecha_fin }
+                data: [
+                    { metodo_pago: 'Total General', cantidad_facturas: '-', total_facturado: 0 },
+                    { metodo_pago: 'Efectivo', cantidad_facturas: '-', total_facturado: 0 },
+                    { metodo_pago: 'Tarjeta', cantidad_facturas: '-', total_facturado: 0 },
+                    { metodo_pago: 'Cheque', cantidad_facturas: '-', total_facturado: 0 },
+                    { metodo_pago: 'Transferencia', cantidad_facturas: '-', total_facturado: 0 }
+                ],
+                periodo: { fecha_inicio, fecha_fin },
+                mensaje: 'No hay facturas en el período seleccionado'
             });
         }
-        
-        // Transformar resultado
-        const fila = datos[0];
+
+        // Transformar resultado - convertir NULL a 0
+        const fila = resultados[0];
         const datosFormateados = [
-            { metodo_pago: 'Total General', cantidad_facturas: '-', total_facturado: fila.total_general || 0 },
-            { metodo_pago: 'Efectivo', cantidad_facturas: '-', total_facturado: fila.efectivo || 0 },
-            { metodo_pago: 'Tarjeta', cantidad_facturas: '-', total_facturado: fila.tarjeta || 0 },
-            { metodo_pago: 'Cheque', cantidad_facturas: '-', total_facturado: fila.cheque || 0 },
-            { metodo_pago: 'Transferencia', cantidad_facturas: '-', total_facturado: fila.transferencia || 0 }
+            { metodo_pago: 'Total General', cantidad_facturas: '-', total_facturado: parseFloat(fila.total_general) || 0 },
+            { metodo_pago: 'Efectivo', cantidad_facturas: '-', total_facturado: parseFloat(fila.efectivo) || 0 },
+            { metodo_pago: 'Tarjeta', cantidad_facturas: '-', total_facturado: parseFloat(fila.tarjeta) || 0 },
+            { metodo_pago: 'Cheque', cantidad_facturas: '-', total_facturado: parseFloat(fila.cheque) || 0 },
+            { metodo_pago: 'Transferencia', cantidad_facturas: '-', total_facturado: parseFloat(fila.transferencia) || 0 }
         ];
         
         res.json({
@@ -79,8 +82,9 @@ exports.productosMasIngresos = async (req, res) => {
             'CALL sp_reporte_productos_mas_ingresos(:fecha_inicio, :fecha_fin, :limite)',
             { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) } }
         );
-        
-        const datos = (resultados[0] || []).map(item => ({
+
+        // FIXED
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             producto_nombre: item.nombre,
             sku: item.sku,
             categoria_nombre: item.categoria,
@@ -122,8 +126,9 @@ exports.productosMasVendidos = async (req, res) => {
             'CALL sp_reporte_productos_mas_vendidos(:fecha_inicio, :fecha_fin, :limite)',
             { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) } }
         );
-        
-        const datos = (resultados[0] || []).map(item => ({
+
+        // FIXED
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             producto_nombre: item.nombre,
             sku: item.sku,
             unidad_medida: item.unidad_medida,
@@ -153,8 +158,9 @@ exports.productosMasVendidos = async (req, res) => {
 exports.inventarioGeneral = async (req, res) => {
     try {
         const resultados = await sequelize.query('CALL sp_reporte_inventario_general()');
-        
-        const datos = (resultados[0] || []).map(item => ({
+
+        // FIXED
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             sucursal_nombre: item.sucursal,
             producto_nombre: item.producto,
             sku: item.sku,
@@ -184,25 +190,33 @@ exports.inventarioGeneral = async (req, res) => {
  */
 exports.productosMenosVendidos = async (req, res) => {
     try {
-        const { limite = 10 } = req.query;
-        
+        const { fecha_inicio, fecha_fin, limite = 10 } = req.query;
+
+        if (!fecha_inicio || !fecha_fin) {
+            return res.status(400).json({
+                success: false,
+                message: 'Debe proporcionar fecha_inicio y fecha_fin'
+            });
+        }
+
         const resultados = await sequelize.query(
-            'CALL sp_reporte_productos_menos_vendidos(:limite)',
-            { replacements: { limite: parseInt(limite) } }
+            'CALL sp_reporte_productos_menos_vendidos(:fecha_inicio, :fecha_fin, :limite)',
+            { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) } }
         );
-        
-        const datos = (resultados[0] || []).map(item => ({
+
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             producto_nombre: item.nombre,
             sku: item.sku,
             total_vendido: item.cantidad_vendida,
             total_ingresos: item.total_ingresos
         }));
-        
+
         res.json({
             success: true,
-            data: datos
+            data: datos,
+            periodo: { fecha_inicio, fecha_fin }
         });
-        
+
     } catch (error) {
         console.error('Error en reporte productos menos vendidos:', error);
         res.status(500).json({
@@ -219,8 +233,9 @@ exports.productosMenosVendidos = async (req, res) => {
 exports.productosSinStock = async (req, res) => {
     try {
         const resultados = await sequelize.query('CALL sp_reporte_productos_sin_stock()');
-        
-        const datos = (resultados[0] || []).map(item => ({
+
+        // FIXED
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             sucursal_nombre: item.sucursal,
             producto_nombre: item.producto,
             sku: item.sku,
@@ -256,17 +271,52 @@ exports.detalleFactura = async (req, res) => {
             });
         }
         
-        const resultados = await sequelize.query(
-            'CALL sp_reporte_detalle_factura(:numero_factura)',
+        // Consultar encabezado
+        const [encabezado] = await sequelize.query(
+            `SELECT
+                f.numero_factura, f.serie, f.correlativo, f.fecha_emision,
+                f.tipo_venta, f.cliente_tipo, f.cliente_nombre, f.cliente_nit,
+                f.cliente_direccion, f.subtotal, f.descuento_total, f.total, f.estado,
+                CONCAT(u.nombre, ' ', u.apellido) AS empleado_emite,
+                s.nombre AS sucursal
+            FROM facturas f
+            JOIN usuarios u ON f.usuario_emite_id = u.id
+            JOIN sucursales s ON f.sucursal_id = s.id
+            WHERE f.numero_factura = :numero_factura`,
             { replacements: { numero_factura } }
         );
-        
+
+        // Consultar productos
+        const [productos] = await sequelize.query(
+            `SELECT
+                COALESCE(fd.producto_nombre, p.nombre) AS producto_nombre,
+                COALESCE(fd.producto_sku, p.sku) AS producto_sku,
+                fd.cantidad, fd.precio_unitario, fd.subtotal
+            FROM facturas_detalle fd
+            JOIN facturas f ON fd.factura_id = f.id
+            LEFT JOIN productos p ON fd.producto_id = p.id
+            WHERE f.numero_factura = :numero_factura`,
+            { replacements: { numero_factura } }
+        );
+
+        // Consultar métodos de pago
+        const [pagos] = await sequelize.query(
+            `SELECT
+                mp.nombre AS metodo_pago, fp.monto,
+                fp.numero_referencia, fp.banco, fp.fecha_pago
+            FROM facturas_pagos fp
+            JOIN facturas f ON fp.factura_id = f.id
+            JOIN metodos_pago mp ON fp.metodo_pago_id = mp.id
+            WHERE f.numero_factura = :numero_factura`,
+            { replacements: { numero_factura } }
+        );
+
         res.json({
             success: true,
             data: {
-                encabezado: resultados[0] && resultados[0][0] ? resultados[0][0] : null,
-                productos: resultados[1] || [],
-                pagos: resultados[2] || []
+                encabezado: encabezado[0] || null,
+                productos: productos || [],
+                pagos: pagos || []
             }
         });
         
@@ -299,7 +349,7 @@ exports.ingresosInventario = async (req, res) => {
             { replacements: { fecha_inicio, fecha_fin } }
         );
         
-        const datos = (resultados[0] || []).map(item => ({
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             codigo_lote: item.codigo_lote,
             fecha_ingreso: item.fecha_ingreso,
             producto_nombre: item.producto,
@@ -332,8 +382,9 @@ exports.ingresosInventario = async (req, res) => {
 exports.stockBajoMinimo = async (req, res) => {
     try {
         const resultados = await sequelize.query('CALL sp_reporte_stock_bajo_minimo()');
-        
-        const datos = (resultados[0] || []).map(item => ({
+
+        // FIXED
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             sucursal_nombre: item.sucursal,
             producto_nombre: item.producto,
             sku: item.sku,
@@ -375,8 +426,9 @@ exports.inventarioPorTienda = async (req, res) => {
             'CALL sp_reporte_inventario_por_tienda(:sucursal_id)',
             { replacements: { sucursal_id: parseInt(sucursal_id) } }
         );
-        
-        const datos = (resultados[0] || []).map(item => ({
+
+        // FIXED
+        const datos = (Array.isArray(resultados) ? resultados : []).map(item => ({
             producto_nombre: item.producto,
             sku: item.sku,
             categoria_nombre: item.categoria,
@@ -416,12 +468,18 @@ exports.exportarReporte = async (req, res) => {
     // Obtener datos según el tipo de reporte
     switch (tipo) {
       case 'facturacion-metodo-pago':
+        if (!fecha_inicio || !fecha_fin) {
+          return res.status(400).json({
+            success: false,
+            message: 'Debe proporcionar fecha_inicio y fecha_fin'
+          });
+        }
         titulo = `Facturación por Método de Pago (${fecha_inicio} al ${fecha_fin})`;
         const [r1] = await sequelize.query(
           'CALL sp_reporte_facturacion_metodo_pago(:fecha_inicio, :fecha_fin)',
           { replacements: { fecha_inicio, fecha_fin } }
         );
-        const fila = r1[0];
+        const fila = (r1 && r1[0]) || {};
         datos = [
           { metodo_pago: 'Total General', total_facturado: `Q${parseFloat(fila.total_general || 0).toFixed(2)}` },
           { metodo_pago: 'Efectivo', total_facturado: `Q${parseFloat(fila.efectivo || 0).toFixed(2)}` },
@@ -436,12 +494,18 @@ exports.exportarReporte = async (req, res) => {
         break;
 
       case 'productos-mas-ingresos':
+        if (!fecha_inicio || !fecha_fin) {
+          return res.status(400).json({
+            success: false,
+            message: 'Debe proporcionar fecha_inicio y fecha_fin'
+          });
+        }
         titulo = `Productos que Más Ingresos Generan (${fecha_inicio} al ${fecha_fin})`;
         const [r2] = await sequelize.query(
           'CALL sp_reporte_productos_mas_ingresos(:fecha_inicio, :fecha_fin, :limite)',
           { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) || 10 } }
         );
-        datos = r2.map(item => ({
+        datos = (r2 || []).map(item => ({
           nombre: item.nombre,
           sku: item.sku,
           categoria: item.categoria,
@@ -458,12 +522,18 @@ exports.exportarReporte = async (req, res) => {
         break;
 
       case 'productos-mas-vendidos':
+        if (!fecha_inicio || !fecha_fin) {
+          return res.status(400).json({
+            success: false,
+            message: 'Debe proporcionar fecha_inicio y fecha_fin'
+          });
+        }
         titulo = `Productos Más Vendidos (${fecha_inicio} al ${fecha_fin})`;
         const [r3] = await sequelize.query(
           'CALL sp_reporte_productos_mas_vendidos(:fecha_inicio, :fecha_fin, :limite)',
           { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) || 10 } }
         );
-        datos = r3.map(item => ({
+        datos = (r3 || []).map(item => ({
           nombre: item.nombre,
           sku: item.sku,
           unidad_medida: item.unidad_medida,
@@ -482,7 +552,7 @@ exports.exportarReporte = async (req, res) => {
       case 'inventario-general':
         titulo = 'Inventario General';
         const [r4] = await sequelize.query('CALL sp_reporte_inventario_general()');
-        datos = r4.map(item => ({
+        datos = (r4 || []).map(item => ({
           sucursal: item.sucursal,
           producto: item.producto,
           sku: item.sku,
@@ -504,12 +574,18 @@ exports.exportarReporte = async (req, res) => {
         break;
 
       case 'productos-menos-vendidos':
-        titulo = 'Productos Menos Vendidos';
+        if (!fecha_inicio || !fecha_fin) {
+          return res.status(400).json({
+            success: false,
+            message: 'Debe proporcionar fecha_inicio y fecha_fin'
+          });
+        }
+        titulo = `Productos Menos Vendidos (${fecha_inicio} al ${fecha_fin})`;
         const [r5] = await sequelize.query(
-          'CALL sp_reporte_productos_menos_vendidos(:limite)',
-          { replacements: { limite: parseInt(limite) || 10 } }
+          'CALL sp_reporte_productos_menos_vendidos(:fecha_inicio, :fecha_fin, :limite)',
+          { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) || 10 } }
         );
-        datos = r5.map(item => ({
+        datos = (r5 || []).map(item => ({
           nombre: item.nombre,
           sku: item.sku,
           cantidad_vendida: item.cantidad_vendida,
@@ -526,7 +602,7 @@ exports.exportarReporte = async (req, res) => {
       case 'productos-sin-stock':
         titulo = 'Productos Sin Stock';
         const [r6] = await sequelize.query('CALL sp_reporte_productos_sin_stock()');
-        datos = r6.map(item => ({
+        datos = (r6 || []).map(item => ({
           sucursal: item.sucursal,
           producto: item.producto,
           sku: item.sku,
@@ -580,12 +656,18 @@ exports.exportarReporte = async (req, res) => {
         break;
 
       case 'ingresos-inventario':
+        if (!fecha_inicio || !fecha_fin) {
+          return res.status(400).json({
+            success: false,
+            message: 'Debe proporcionar fecha_inicio y fecha_fin'
+          });
+        }
         titulo = `Ingresos al Inventario (${fecha_inicio} al ${fecha_fin})`;
         const [r8] = await sequelize.query(
           'CALL sp_reporte_ingresos_inventario(:fecha_inicio, :fecha_fin)',
           { replacements: { fecha_inicio, fecha_fin } }
         );
-        datos = r8.map(item => ({
+        datos = (r8 || []).map(item => ({
           codigo_lote: item.codigo_lote,
           fecha: item.fecha_ingreso,
           producto: item.producto,
@@ -607,7 +689,7 @@ exports.exportarReporte = async (req, res) => {
       case 'stock-bajo-minimo':
         titulo = 'Productos con Stock Bajo el Mínimo';
         const [r9] = await sequelize.query('CALL sp_reporte_stock_bajo_minimo()');
-        datos = r9.map(item => ({
+        datos = (r9 || []).map(item => ({
           sucursal: item.sucursal,
           producto: item.producto,
           sku: item.sku,
@@ -627,12 +709,18 @@ exports.exportarReporte = async (req, res) => {
         break;
 
       case 'inventario-por-tienda':
+        if (!sucursal_id) {
+          return res.status(400).json({
+            success: false,
+            message: 'Debe proporcionar el ID de la sucursal'
+          });
+        }
         titulo = `Inventario por Tienda (Sucursal ID: ${sucursal_id})`;
         const [r10] = await sequelize.query(
           'CALL sp_reporte_inventario_por_tienda(:sucursal_id)',
           { replacements: { sucursal_id: parseInt(sucursal_id) } }
         );
-        datos = r10.map(item => ({
+        datos = (r10 || []).map(item => ({
           producto: item.producto,
           sku: item.sku,
           categoria: item.categoria,
