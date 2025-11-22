@@ -3,13 +3,13 @@
  * Versión compatible con desarrollo local y producción (Railway)
  */
 
-// ✅ API Base URL - Detección automática de entorno
+// API Base URL - Detección automática de entorno
 const API_BASE_URL = (() => {
     // Si estás en localhost, usa la URL completa
     if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
         return 'http://localhost:3000/api';
     }
-    // En producción (Railway, Netlify, etc.), usa rutas relativas
+    // En producción (Railway), usa rutas relativas
     return '/api';
 })();
 

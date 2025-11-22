@@ -151,6 +151,8 @@ function mostrarSucursales() {
 async function cargarSucursales() {
     const container = document.getElementById('sucursales-list');
     
+    if(!container) return;
+    
     try {
         const response = await obtenerSucursales();
         
