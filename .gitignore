@@ -49,3 +49,8 @@ seeders/
 
 # Test
 test-api-simple.sh
+
+# Deployment
+Dockerfile
+letsencrypt-issuer.yaml
+k8s-manifests/
