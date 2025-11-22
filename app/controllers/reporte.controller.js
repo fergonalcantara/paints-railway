@@ -501,11 +501,11 @@ exports.exportarReporte = async (req, res) => {
           });
         }
         titulo = `Productos que Más Ingresos Generan (${fecha_inicio} al ${fecha_fin})`;
-        const [r2] = await sequelize.query(
+        const r2 = await sequelize.query(
           'CALL sp_reporte_productos_mas_ingresos(:fecha_inicio, :fecha_fin, :limite)',
           { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) || 10 } }
         );
-        datos = (r2 || []).map(item => ({
+        datos = (Array.isArray(r2) ? r2 : []).map(item => ({
           nombre: item.nombre,
           sku: item.sku,
           categoria: item.categoria,
@@ -529,11 +529,11 @@ exports.exportarReporte = async (req, res) => {
           });
         }
         titulo = `Productos Más Vendidos (${fecha_inicio} al ${fecha_fin})`;
-        const [r3] = await sequelize.query(
+        const r3 = await sequelize.query(
           'CALL sp_reporte_productos_mas_vendidos(:fecha_inicio, :fecha_fin, :limite)',
           { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) || 10 } }
         );
-        datos = (r3 || []).map(item => ({
+        datos = (Array.isArray(r3) ? r3 : []).map(item => ({
           nombre: item.nombre,
           sku: item.sku,
           unidad_medida: item.unidad_medida,
@@ -551,8 +551,8 @@ exports.exportarReporte = async (req, res) => {
 
       case 'inventario-general':
         titulo = 'Inventario General';
-        const [r4] = await sequelize.query('CALL sp_reporte_inventario_general()');
-        datos = (r4 || []).map(item => ({
+        const r4 = await sequelize.query('CALL sp_reporte_inventario_general()');
+        datos = (Array.isArray(r4) ? r4 : []).map(item => ({
           sucursal: item.sucursal,
           producto: item.producto,
           sku: item.sku,
@@ -581,11 +581,11 @@ exports.exportarReporte = async (req, res) => {
           });
         }
         titulo = `Productos Menos Vendidos (${fecha_inicio} al ${fecha_fin})`;
-        const [r5] = await sequelize.query(
+        const r5 = await sequelize.query(
           'CALL sp_reporte_productos_menos_vendidos(:fecha_inicio, :fecha_fin, :limite)',
           { replacements: { fecha_inicio, fecha_fin, limite: parseInt(limite) || 10 } }
         );
-        datos = (r5 || []).map(item => ({
+        datos = (Array.isArray(r5) ? r5 : []).map(item => ({
           nombre: item.nombre,
           sku: item.sku,
           cantidad_vendida: item.cantidad_vendida,
@@ -601,8 +601,8 @@ exports.exportarReporte = async (req, res) => {
 
       case 'productos-sin-stock':
         titulo = 'Productos Sin Stock';
-        const [r6] = await sequelize.query('CALL sp_reporte_productos_sin_stock()');
-        datos = (r6 || []).map(item => ({
+        const r6 = await sequelize.query('CALL sp_reporte_productos_sin_stock()');
+        datos = (Array.isArray(r6) ? r6 : []).map(item => ({
           sucursal: item.sucursal,
           producto: item.producto,
           sku: item.sku,
@@ -663,11 +663,11 @@ exports.exportarReporte = async (req, res) => {
           });
         }
         titulo = `Ingresos al Inventario (${fecha_inicio} al ${fecha_fin})`;
-        const [r8] = await sequelize.query(
+        const r8 = await sequelize.query(
           'CALL sp_reporte_ingresos_inventario(:fecha_inicio, :fecha_fin)',
           { replacements: { fecha_inicio, fecha_fin } }
         );
-        datos = (r8 || []).map(item => ({
+        datos = (Array.isArray(r8) ? r8 : []).map(item => ({
           codigo_lote: item.codigo_lote,
           fecha: item.fecha_ingreso,
           producto: item.producto,
@@ -688,8 +688,8 @@ exports.exportarReporte = async (req, res) => {
 
       case 'stock-bajo-minimo':
         titulo = 'Productos con Stock Bajo el Mínimo';
-        const [r9] = await sequelize.query('CALL sp_reporte_stock_bajo_minimo()');
-        datos = (r9 || []).map(item => ({
+        const r9 = await sequelize.query('CALL sp_reporte_stock_bajo_minimo()');
+        datos = (Array.isArray(r9) ? r9 : []).map(item => ({
           sucursal: item.sucursal,
           producto: item.producto,
           sku: item.sku,
@@ -716,11 +716,11 @@ exports.exportarReporte = async (req, res) => {
           });
         }
         titulo = `Inventario por Tienda (Sucursal ID: ${sucursal_id})`;
-        const [r10] = await sequelize.query(
+        const r10 = await sequelize.query(
           'CALL sp_reporte_inventario_por_tienda(:sucursal_id)',
           { replacements: { sucursal_id: parseInt(sucursal_id) } }
         );
-        datos = (r10 || []).map(item => ({
+        datos = (Array.isArray(r10) ? r10 : []).map(item => ({
           producto: item.producto,
           sku: item.sku,
           categoria: item.categoria,
