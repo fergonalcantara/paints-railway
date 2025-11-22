@@ -11,7 +11,7 @@ function actualizarCarritoBadge() {
     const badge = document.getElementById('cart-badge');
     const cantidad = carrito.reduce((sum, item) => sum + item.cantidad, 0);
     badge.textContent = cantidad;
-    
+
     if (cantidad > 0) {
         badge.style.display = 'inline-block';
     } else {
@@ -19,31 +19,36 @@ function actualizarCarritoBadge() {
     }
 }
 
-// Agregar producto al carrito - FORMATO ACTUALIZADO
 function agregarAlCarrito(producto, cantidad = 1) {
     const existente = carrito.find(item => item.producto_id === producto.id);
-    
+
     if (existente) {
         existente.cantidad += cantidad;
+        existente.subtotal = existente.cantidad * existente.precio_unitario;
     } else {
-        // Formato compatible con el backend y checkout
+        const precio = parseFloat(producto.precio_venta);
+        const descuento = parseFloat(producto.descuento_porcentaje || 0);
+        const precioFinal = precio - (precio * descuento / 100);
+
         carrito.push({
             producto_id: producto.id,
             producto_nombre: producto.nombre,
             producto_sku: producto.sku,
             cantidad: cantidad,
-            precio_unitario: parseFloat(producto.precio_venta),
-            descuento_porcentaje: parseFloat(producto.descuento_porcentaje || 0),
+            precio_unitario: precioFinal,
+            descuento_porcentaje: descuento,
+            subtotal: precioFinal * cantidad,
+
             producto: {
                 id: producto.id,
                 nombre: producto.nombre,
                 sku: producto.sku,
-                precio_venta: parseFloat(producto.precio_venta),
+                precio_venta: precio,
                 imagen_url: producto.imagen_url
             }
         });
     }
-    
+
     guardarCarrito();
     actualizarCarritoBadge();
     actualizarVistaCarrito();
@@ -61,10 +66,10 @@ function removerDelCarrito(productoId) {
 // Actualizar cantidad
 function actualizarCantidad(productoId, cantidad) {
     const item = carrito.find(item => item.producto_id === productoId);
-    
+
     if (item) {
         item.cantidad = parseInt(cantidad);
-        
+
         if (item.cantidad <= 0) {
             removerDelCarrito(productoId);
         } else {
@@ -94,10 +99,10 @@ function calcularTotal() {
         const precio = parseFloat(item.precio_unitario);
         const cantidad = parseInt(item.cantidad);
         const descuento = parseFloat(item.descuento_porcentaje || 0);
-        
+
         const subtotal = precio * cantidad;
         const descuentoMonto = subtotal * (descuento / 100);
-        
+
         return sum + (subtotal - descuentoMonto);
     }, 0);
 }
@@ -114,7 +119,7 @@ function actualizarVistaCarrito() {
     const carritoItems = document.getElementById('carrito-items');
     const carritoTotal = document.getElementById('carrito-total');
     const totalAmount = document.getElementById('carrito-total-amount');
-    
+
     if (carrito.length === 0) {
         carritoItems.innerHTML = `
             <div class="text-center py-5">
@@ -125,7 +130,7 @@ function actualizarVistaCarrito() {
         carritoTotal.style.display = 'none';
         return;
     }
-    
+
     carritoItems.innerHTML = carrito.map(item => `
         <div class="carrito-item mb-3 p-3 border rounded">
             <div class="row align-items-center">
@@ -138,8 +143,8 @@ function actualizarVistaCarrito() {
                     <h6 class="mb-1">${item.producto_nombre}</h6>
                     <p class="text-muted small mb-1">SKU: ${item.producto_sku}</p>
                     <p class="text-primary fw-bold mb-0">Q${item.precio_unitario.toFixed(2)}</p>
-                    ${item.descuento_porcentaje > 0 ? 
-                        `<span class="badge bg-success">-${item.descuento_porcentaje}%</span>` : ''}
+                    ${item.descuento_porcentaje > 0 ?
+            `<span class="badge bg-success">-${item.descuento_porcentaje}%</span>` : ''}
                 </div>
                 <div class="col-3">
                     <div class="input-group input-group-sm mb-2">
@@ -165,7 +170,7 @@ function actualizarVistaCarrito() {
             </div>
         </div>
     `).join('');
-    
+
     carritoTotal.style.display = 'block';
     totalAmount.textContent = `Q${calcularTotal().toFixed(2)}`;
 }
@@ -176,7 +181,7 @@ function irAlCheckout() {
         alert('Tu carrito está vacío');
         return;
     }
-    
+
     // El carrito ya está guardado en localStorage
     window.location.href = '/checkout.html';
 }
@@ -189,7 +194,7 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
     toast.setAttribute('role', 'alert');
     toast.setAttribute('aria-live', 'assertive');
     toast.setAttribute('aria-atomic', 'true');
-    
+
     toast.innerHTML = `
         <div class="d-flex">
             <div class="toast-body">
@@ -199,7 +204,7 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
                     data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     `;
-    
+
     // Agregar al DOM
     let toastContainer = document.getElementById('toast-container');
     if (!toastContainer) {
@@ -208,13 +213,13 @@ function mostrarNotificacion(mensaje, tipo = 'success') {
         toastContainer.className = 'toast-container position-fixed bottom-0 end-0 p-3';
         document.body.appendChild(toastContainer);
     }
-    
+
     toastContainer.appendChild(toast);
-    
+
     // Mostrar toast
     const bsToast = new bootstrap.Toast(toast);
     bsToast.show();
-    
+
     // Remover del DOM después de ocultarse
     toast.addEventListener('hidden.bs.toast', () => {
         toast.remove();

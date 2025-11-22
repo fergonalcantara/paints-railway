@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // Solicitar ubicación
 function solicitarUbicacion() {
     const statusElement = document.getElementById('ubicacion-status');
-    
+
     if (!navigator.geolocation) {
         statusElement.innerHTML = `
             <div class="alert alert-warning">
@@ -48,7 +48,14 @@ function solicitarUbicacion() {
                 if (response.success) {
                     // El backend devuelve: { success: true, data: { mas_cercana: {...}, todas: [...] } }
                     sucursalCercana = response.data.mas_cercana;
-                    
+
+                    // GUARDAR EN LOCALSTORAGE
+                    localStorage.setItem("sucursalActualId", sucursalCercana.id);
+                    localStorage.setItem("sucursalActualNombre", sucursalCercana.nombre);
+
+                    window.dispatchEvent(new Event("sucursal-cambiada"));
+
+
                     statusElement.innerHTML = `
                         <div class="alert alert-success">
                             <i class="bi bi-check-circle"></i>
@@ -78,8 +85,8 @@ function solicitarUbicacion() {
         },
         (error) => {
             let mensaje = 'Error al obtener ubicación';
-            
-            switch(error.code) {
+
+            switch (error.code) {
                 case error.PERMISSION_DENIED:
                     mensaje = 'Permiso de ubicación denegado';
                     break;
@@ -115,7 +122,7 @@ function omitirUbicacion() {
 // Actualizar UI con sucursal cercana
 function actualizarSucursalCercanaUI() {
     const topBar = document.getElementById('sucursal-cercana-top');
-    
+
     if (sucursalCercana) {
         topBar.innerHTML = `
             <i class="bi bi-geo-alt-fill"></i> 
@@ -130,14 +137,14 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
     const R = 6371; // Radio de la Tierra en km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
-    
-    const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-              Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-              Math.sin(dLon/2) * Math.sin(dLon/2);
-    
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+
+    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distancia = R * c;
-    
+
     return distancia;
 }
 
@@ -150,15 +157,15 @@ function mostrarSucursales() {
 // Cargar todas las sucursales
 async function cargarSucursales() {
     const container = document.getElementById('sucursales-list');
-    
-    if(!container) return;
-    
+
+    if (!container) return;
+
     try {
         const response = await obtenerSucursales();
-        
+
         if (response.success) {
             todasSucursales = response.data;
-            
+
             // Si hay ubicación del usuario, calcular distancias
             if (ubicacionUsuario) {
                 todasSucursales = todasSucursales.map(sucursal => ({
@@ -170,11 +177,11 @@ async function cargarSucursales() {
                         parseFloat(sucursal.longitud)
                     )
                 }));
-                
+
                 // Ordenar por distancia
                 todasSucursales.sort((a, b) => a.distancia - b.distancia);
             }
-            
+
             container.innerHTML = todasSucursales.map(sucursal => `
                 <div class="col-md-4 col-sm-6">
                     <div class="sucursal-card">

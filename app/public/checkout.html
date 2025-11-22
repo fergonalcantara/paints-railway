@@ -1,210 +1,338 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout - Paints E-commerce</title>
-    
-    <!-- Bootstrap 5 -->
+    <title>Paints Guatemala - La Mejor Tienda de Pinturas</title>
+
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <!-- Estilos personalizados -->
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
 </head>
+
 <body>
-    <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="/">
-                <i class="bi bi-paint-bucket"></i> PAINTS
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/">
-                            <i class="bi bi-house-door"></i> Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/carrito.html">
-                            <i class="bi bi-cart"></i> Carrito
-                        </a>
-                    </li>
-                    <li class="nav-item" id="navUsuario"></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
 
-    <!-- Checkout Container -->
-    <div class="checkout-container">
-        <!-- Steps -->
-        <div class="checkout-steps">
-            <div class="step completed">
-                <div class="step-number">1</div>
-                <div class="step-text">Carrito</div>
-            </div>
-            <div class="step active">
-                <div class="step-number">2</div>
-                <div class="step-text">Datos</div>
-            </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <div class="step-text">Pago</div>
-            </div>
-            <div class="step">
-                <div class="step-number">4</div>
-                <div class="step-text">Confirmación</div>
-            </div>
-        </div>
-
-        <div class="row">
-            <!-- Formulario de Checkout -->
-            <div class="col-lg-7">
-                <!-- Información del Cliente -->
-                <div class="checkout-section">
-                    <h4 class="mb-4">
-                        <i class="bi bi-person-circle me-2"></i>
-                        Información del Cliente
-                    </h4>
-                    
-                    <form id="formCheckout">
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Nombre *</label>
-                                <input type="text" class="form-control" id="nombre" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Apellido</label>
-                                <input type="text" class="form-control" id="apellido">
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Email *</label>
-                                <input type="email" class="form-control" id="email" required>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Teléfono *</label>
-                                <input type="tel" class="form-control" id="telefono" required>
-                            </div>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">NIT</label>
-                                <input type="text" class="form-control" id="nit" placeholder="CF">
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">DPI</label>
-                                <input type="text" class="form-control" id="dpi">
-                            </div>
-                        </div>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Dirección de Entrega *</label>
-                            <textarea class="form-control" id="direccion" rows="3" required></textarea>
-                        </div>
-                        
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Departamento *</label>
-                                <select class="form-select" id="departamento" required>
-                                    <option value="">Seleccione...</option>
-                                </select>
-                            </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Municipio *</label>
-                                <select class="form-select" id="municipio" required>
-                                    <option value="">Seleccione departamento primero...</option>
-                                </select>
-                            </div>
-                        </div>
-                    </form>
+    <!-- Solicitud de Ubicación Modal (Se muestra al cargar) -->
+    <div class="modal fade" id="ubicacionModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="bi bi-geo-alt-fill text-primary"></i> Encuentra tu sucursal más cercana
+                    </h5>
                 </div>
-
-                <!-- Métodos de Pago -->
-                <div class="checkout-section">
-                    <h4 class="mb-4">
-                        <i class="bi bi-credit-card me-2"></i>
-                        Método de Pago
-                    </h4>
-                    
-                    <div id="metodosPago">
-                        <!-- Se llenará dinámicamente -->
+                <div class="modal-body text-center">
+                    <p>Para ofrecerte la mejor experiencia, necesitamos tu ubicación para mostrarte los productos
+                        disponibles en la sucursal más cercana.</p>
+                    <div id="ubicacion-status" class="mt-3">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Cargando...</span>
+                        </div>
+                        <p class="mt-2">Solicitando ubicación...</p>
                     </div>
                 </div>
-
-                <!-- Notas adicionales -->
-                <div class="checkout-section">
-                    <h5 class="mb-3">Notas adicionales (opcional)</h5>
-                    <textarea class="form-control" id="notas" rows="3" placeholder="Instrucciones especiales para la entrega..."></textarea>
-                </div>
-            </div>
-
-            <!-- Resumen de la Orden -->
-            <div class="col-lg-5">
-                <div class="checkout-section order-summary">
-                    <h4 class="mb-4">
-                        <i class="bi bi-bag-check me-2"></i>
-                        Resumen de la Orden
-                    </h4>
-                    
-                    <div id="resumenProductos">
-                        <!-- Se llenará dinámicamente -->
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Subtotal:</span>
-                        <span id="subtotal">Q0.00</span>
-                    </div>
-                    
-                    <div class="d-flex justify-content-between mb-2">
-                        <span>Descuento:</span>
-                        <span id="descuento" class="text-success">-Q0.00</span>
-                    </div>
-                    
-                    <hr>
-                    
-                    <div class="d-flex justify-content-between summary-total">
-                        <span>Total:</span>
-                        <span id="total">Q0.00</span>
-                    </div>
-                    
-                    <button class="btn btn-primary btn-lg w-100 mt-4" onclick="confirmarPedido()">
-                        <i class="bi bi-check-circle me-2"></i>
-                        Confirmar Pedido
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="omitirUbicacion()">Omitir por
+                        ahora</button>
+                    <button type="button" class="btn btn-primary" onclick="solicitarUbicacion()">
+                        <i class="bi bi-geo-alt"></i> Permitir Ubicación
                     </button>
-                    
-                    <a href="/carrito.html" class="btn btn-outline-secondary w-100 mt-2">
-                        <i class="bi bi-arrow-left me-2"></i>
-                        Volver al Carrito
-                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-dark text-white text-center py-4 mt-5">
+    <!-- Top Bar -->
+    <div class="top-bar">
         <div class="container">
-            <p class="mb-0">&copy; 2025 Paints E-commerce. Todos los derechos reservados.</p>
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <small>
+                        <i class="bi bi-telephone-fill"></i> Llámanos: 2222-3333 |
+                        <i class="bi bi-envelope-fill"></i> info@paints.com.gt
+                    </small>
+                </div>
+                <div class="col-md-6 text-end">
+                    <small id="sucursal-cercana-top">
+                        <i class="bi bi-geo-alt-fill"></i> Selecciona tu ubicación
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header/Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <!-- Logo -->
+            <a class="navbar-brand" href="/index.html">
+                <span class="brand-text">PAINTS</span>
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <!-- Navbar Content -->
+            <div class="collapse navbar-collapse" id="navbarMain">
+                <!-- Barra de Búsqueda (Centrada) -->
+                <div class="mx-auto" style="width: 100%; max-width: 600px;">
+                    <form class="search-form" onsubmit="buscarProductos(event)">
+                        <div class="input-group">
+                            <input type="text" class="form-control search-input" id="search-input"
+                                placeholder="Buscar pinturas, barnices, accesorios..." aria-label="Buscar productos">
+                            <button class="btn btn-primary" type="submit">
+                                <i class="bi bi-search"></i>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Menú Derecha -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- Usuario -->
+                    <li class="nav-item dropdown" id="user-menu">
+                        <a class="nav-link" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i>
+                            <span id="user-name">Ingresar</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#" onclick="mostrarLogin()">Iniciar Sesión</a></li>
+                            <li><a class="dropdown-item" href="#" onclick="mostrarRegistro()">Registrarse</a></li>
+                        </ul>
+                    </li>
+
+                    <!-- Carrito -->
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="#" onclick="toggleCarrito()">
+                            <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+                            <span class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+                                id="cart-badge">0</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mb-5">
+        <div class="row g-4">
+            <div class="section-header">
+                <h2>Checkout</h2>
+            </div>
+            <!-- Lista de productos -->
+            <div class="col-lg-8">
+                <div class="card card-checkout p-3">
+                    <h5 class="mb-3">Tu Pedido</h5>
+                    <div id="checkout-items">
+                        <!-- Se inyectan los productos del carrito -->
+                    </div>
+
+                    <div id="carrito-vacio" class="text-center py-5 text-muted" style="display:none;">
+                        <i class="bi bi-cart-x" style="font-size: 3rem;"></i>
+                        <p class="mt-3">Tu carrito está vacío</p>
+                        <a href="/" class="btn btn-outline-primary">Seguir comprando</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen y formulario -->
+            <div class="col-lg-4">
+                <div class="card card-checkout p-3">
+                    <h5 class="mb-3">Resumen</h5>
+
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal</span>
+                            <strong id="res-subtotal">Q0.00</strong>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Descuento</span>
+                            <strong id="res-descuento">Q0.00</strong>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <span>Total</span>
+                            <strong id="res-total">Q0.00</strong>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <!-- Cliente: si hay usuario logueado se usa, si no, formulario cliente físico -->
+                    <div id="cliente-seccion" class="mb-3">
+                        <h6>Cliente</h6>
+                        <div id="cliente-logged" style="display:none;">
+                            <p class="mb-1">Usuario: <strong id="cliente-nombre-logged"></strong></p>
+                            <small id="cliente-email-logged" class="text-muted"></small>
+                        </div>
+
+                        <div id="cliente-fisico-form" style="display:none;">
+                            <div class="mb-2">
+                                <label class="form-label small">Nombre</label>
+                                <input id="cliente_fisico_nombre" class="form-control form-control-sm"
+                                    placeholder="Nombre del cliente">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">NIT</label>
+                                <input id="cliente_fisico_nit" class="form-control form-control-sm"
+                                    placeholder="NIT / DPI">
+                            </div>
+                            <div class="mb-2">
+                                <label class="form-label small">Dirección</label>
+                                <input id="cliente_fisico_direccion" class="form-control form-control-sm"
+                                    placeholder="Dirección">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Observaciones -->
+                    <div class="mb-3">
+                        <label class="form-label">Observaciones</label>
+                        <textarea id="observaciones" rows="3" class="form-control form-control-sm"
+                            placeholder="Notas para la factura (opcional)"></textarea>
+                    </div>
+
+                    <!-- Botón finalizar compra -->
+                    <div class="d-grid">
+                        <button id="btn-finalizar" class="btn btn-success" disabled>
+                            <i class="bi bi-check2-circle"></i> Finalizar compra (Efectivo)
+                        </button>
+                    </div>
+
+                    <small class="d-block mt-2 text-muted">Se registrará un pago en efectivo</small>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Resultado -->
+    <div class="modal fade" id="resultadoModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Resultado</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body" id="resultadoModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <a id="ver-factura-link" class="btn btn-primary" href="#" style="display:none;">Ver
+                        factura</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast container (carrito.js lo crea si no existe) -->
+    <div id="toast-root"></div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>PAINTS Guatemala</h5>
+                    <p>La mejor calidad en pinturas y accesorios desde 1990.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Enlaces Rápidos</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="/catalogo.html">Catálogo</a></li>
+                        <li><a href="#sucursales-section">Sucursales</a></li>
+                        <li><a href="/admin/dashboard.html">Portal Empleados</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Contacto</h5>
+                    <p>
+                        <i class="bi bi-telephone"></i> 2222-3333<br>
+                        <i class="bi bi-envelope"></i> info@paints.com.gt<br>
+                        <i class="bi bi-geo-alt"></i> Guatemala, Guatemala
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center">
+                <p>&copy; 2025 Paints Guatemala. Todos los derechos reservados.</p>
+            </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
-    <script src="js/carrito.js"></script>
-    <script src="js/ubicacion.js"></script>
-    <script src="js/checkout.js"></script>
+    <!-- Login/Registro Modal -->
+    <div class="modal fade" id="authModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="authModalLabel">Iniciar Sesión</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Login Form -->
+                    <form id="loginForm" onsubmit="login(event)">
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="loginEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="loginPassword" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Ingresar</button>
+                        <p class="text-center mt-3">
+                            ¿No tienes cuenta? <a href="#" onclick="mostrarRegistro()">Regístrate aquí</a>
+                        </p>
+                    </form>
+
+                    <!-- Registro Form (Oculto inicialmente) -->
+                    <form id="registroForm" style="display: none;" onsubmit="registro(event)">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="regNombre" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="regApellido" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email" class="form-control" id="regEmail" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="regPassword" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Teléfono</label>
+                            <input type="tel" class="form-control" id="regTelefono">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                        <p class="text-center mt-3">
+                            ¿Ya tienes cuenta? <a href="#" onclick="mostrarLogin()">Inicia sesión</a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS + Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Scripts Personalizados -->
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/carrito.js"></script>
+    <script src="/js/ubicacion.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="/js/checkout.js"></script>
 </body>
+
 </html>
