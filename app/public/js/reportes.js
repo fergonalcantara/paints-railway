@@ -11,15 +11,15 @@
 const API_URL = API_BASE_URL || 'http://localhost:3000/api';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('📊 Inicializando módulo de reportes...');
+    console.log('Inicializando módulo de reportes...');
     
     try {
         // Cargar sucursales para el reporte 10
         await cargarSucursales();
         
-        console.log('✅ Módulo de reportes inicializado');
+        console.log('Módulo de reportes inicializado');
     } catch (error) {
-        console.error('❌ Error al inicializar reportes:', error);
+        console.error('Error al inicializar reportes:', error);
     }
 });
 
@@ -245,21 +245,28 @@ async function generarReporte4() {
 // ======================
 
 async function generarReporte5() {
+    const fechaInicio = document.getElementById('r5FechaInicio').value;
+    const fechaFin = document.getElementById('r5FechaFin').value;
     const limite = document.getElementById('r5Limite').value;
-    
+
+    if (!fechaInicio || !fechaFin) {
+        mostrarError('Debe seleccionar ambas fechas');
+        return;
+    }
+
     try {
         const response = await fetch(`${API_URL}/reportes/productos-menos-vendidos?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}&limite=${limite}`, {
             credentials: 'include'
         });
-        
+
         const resultado = await response.json();
-        
+
         if (!resultado.success) {
             throw new Error(resultado.message);
         }
-        
+
         const tbody = document.getElementById('tablaReporte5');
-        
+
         if (!resultado.data || resultado.data.length === 0) {
             tbody.innerHTML = `
                 <tr>
@@ -270,7 +277,7 @@ async function generarReporte5() {
             `;
             return;
         }
-        
+
         tbody.innerHTML = resultado.data.map((item, index) => `
             <tr>
                 <td><strong>${index + 1}</strong></td>
@@ -279,9 +286,9 @@ async function generarReporte5() {
                 <td>${formatearPrecio(item.total_ingresos || 0)}</td>
             </tr>
         `).join('');
-        
+
         mostrarExito('Reporte generado correctamente');
-        
+
     } catch (error) {
         console.error('Error generando reporte 5:', error);
         mostrarError('Error al generar el reporte: ' + error.message);
@@ -645,7 +652,9 @@ function exportarReporte(tipo, formato) {
             break;
             
         case 'productos-menos-vendidos':
-           params.append('limite', document.getElementById('r5Limite').value);
+            params.append('fecha_inicio', document.getElementById('r5FechaInicio').value);
+            params.append('fecha_fin', document.getElementById('r5FechaFin').value);
+            params.append('limite', document.getElementById('r5Limite').value);
             break;
             
         case 'productos-sin-stock':
